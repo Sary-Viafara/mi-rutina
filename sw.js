@@ -1,7 +1,12 @@
 /* ── Service Worker · Mi Rutina · Sary ── */
-const CACHE  = 'mi-rutina-v1';
-const ASSETS = ['./', './index.html', './manifest.json',
-                './icons/icon-192.png', './icons/icon-512.png'];
+const CACHE  = 'mi-rutina-v2'; // Cambiamos la versión a v2 para forzar la actualización del caché
+const ASSETS = [
+  './',
+  './index.html',
+  './manifest.json',
+  './icon-192.png',
+  './icon-512.png'
+];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)).catch(()=>{}));
@@ -33,3 +38,4 @@ self.addEventListener('fetch', e => {
     })
   );
 });
+
