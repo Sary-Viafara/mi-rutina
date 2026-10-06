@@ -1,5 +1,6 @@
 /* ── Service Worker · Mi Rutina · Sary ── */
-const CACHE  = 'mi-rutina-v2'; // Cambiamos la versión a v2 para forzar la actualización del caché
+const CACHE = 'mi-rutina-v3';
+
 const ASSETS = [
   './',
   './index.html',
@@ -13,32 +14,45 @@ self.addEventListener('install', e => {
     caches.open(CACHE)
       .then(c => c.addAll(ASSETS))
       .then(() => self.skipWaiting())
-    );
+  );
 });
 
 self.addEventListener('activate', e => {
-  e.waitUntil(caches.keys().then(ks =>
-    Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))
-  ));
+  e.waitUntil(
+    caches.keys().then(ks =>
+      Promise.all(
+        ks
+          .filter(k => k !== CACHE)
+          .map(k => caches.delete(k))
+      )
+    )
+  );
+
   self.clients.claim();
 });
 
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
+
   e.respondWith(
     caches.match(e.request).then(cached => {
       if (cached) {
-        fetch(e.request)
-          .then(r => { if (r && r.status === 200) caches.open(CACHE).then(c => c.put(e.request, r)); })
-          .catch(() => {});
         return cached;
       }
-      return fetch(e.request).then(r => {
-        if (!r || r.status !== 200 || r.type === 'opaque') return r;
-        caches.open(CACHE).then(c => c.put(e.request, r.clone()));
-        return r;
+
+      return fetch(e.request).then(response => {
+        if (!response || response.status !== 200 || response.type === 'opaque') {
+          return response;
+        }
+
+        const responseClone = response.clone();
+
+        caches.open(CACHE).then(cache => {
+          cache.put(e.request, responseClone);
+        });
+
+        return response;
       }).catch(() => caches.match('./index.html'));
     })
   );
 });
-
