@@ -13,7 +13,7 @@
 <meta name="application-name" content="Mi Rutina">
 <meta name="description" content="Rutina diaria · hábitos · bienestar · Sary">
 <link rel="manifest" href="./manifest.json">
-<link rel="apple-touch-icon" href="./icon-192.png">
+<link rel="apple-touch-icon" href="./icons/icon-192.png">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#0D0D15;--card:#161622;--card2:#1E1E2C;--border:#272736;--text:#EFEFFA;--muted:#60608A;--soft:#9090B8;--green:#4ADE80;--yellow:#FBBF24;--red:#F87171;--prog:#4ECDC4;--eng:#FFD166;--com:#A78BFA;--dis:#FF6B9D;--esc:#6EE7B7;--ms:#FFA94D;--car:#FB923C;--clean:#94A3B8;--r:16px;--rs:10px;}
@@ -969,7 +969,7 @@ function saveAdj() {
   renderHoy();
   setTimeout(()=>toggleTaskTimer(savedId,{stopPropagation:()=>{}}),150);
 }
-document.getElementById('tadjOv').addEventListener('click',function(e){if(e.target===this)closeAdj();});
+document.addEventListener('DOMContentLoaded',function(){document.getElementById('tadjOv').addEventListener('click',function(e){if(e.target===this)closeAdj();});});
 
 init();
 </script>
@@ -1000,15 +1000,15 @@ init();
     <button class="tadj-cancel" onclick="closeAdj()">Solo guardar · sin timer</button>
   </div>
 </div>
-<!-- Registro del Service Worker -->
+
 <script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js')
-        .then(reg => console.log('SW registrado con éxito:', reg))
-        .catch(err => console.error('Error al registrar SW:', err));
-    });
-  }
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('./sw.js', { scope: './' })
+      .then(function (r) { console.log('[PWA] SW:', r.scope); })
+      .catch(function (e) { console.info('[PWA] Requiere HTTPS:', e.message); });
+  });
+}
 </script>
 </body>
 </html>
